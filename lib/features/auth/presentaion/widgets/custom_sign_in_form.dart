@@ -5,21 +5,21 @@ import 'package:dalel/core/widgets/custom_button.dart';
 import 'package:dalel/features/auth/presentaion/auth_cubit/auth_cubit.dart';
 import 'package:dalel/features/auth/presentaion/auth_cubit/auth_state.dart';
 import 'package:dalel/features/auth/presentaion/widgets/custom_text_field.dart';
-import 'package:dalel/features/auth/presentaion/widgets/terms_and_conditions.dart';
+import 'package:dalel/features/auth/presentaion/widgets/forget_password.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class CustomSignUpFoem extends StatelessWidget {
-  const CustomSignUpFoem({super.key});
+class CustomSignInForm extends StatelessWidget {
+  const CustomSignInForm({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
-        if (state is SignupSuccesState) {
+        if (state is SigninSuccesState) {
           Fluttertoast.showToast(
-            msg: "Accont Created Successfuly",
+            msg: "Welcome Back",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIosWeb: 1,
@@ -28,7 +28,7 @@ class CustomSignUpFoem extends StatelessWidget {
             fontSize: 16.0,
           );
           customReplacementNavigate(context, "/HomePage");
-        } else if (state is SignupFailureState) {
+        } else if (state is SigninFailureState) {
           Fluttertoast.showToast(
             msg: state.errMessage,
             toastLength: Toast.LENGTH_SHORT,
@@ -43,21 +43,10 @@ class CustomSignUpFoem extends StatelessWidget {
       builder: (context, state) {
         AuthCubit authCubit = BlocProvider.of<AuthCubit>(context);
         return Form(
-          key: authCubit.sinupFormKey,
+          key: authCubit.sininFormKey,
           child: Column(
             children: [
-              CustomTexFormtField(
-                labelText: AppStrings.fristName,
-                onChanged: (fristName) {
-                  authCubit.fristName = fristName;
-                },
-              ),
-              CustomTexFormtField(
-                labelText: AppStrings.lastName,
-                onChanged: (lastName) {
-                  authCubit.lastName = lastName;
-                },
-              ),
+              SizedBox(height: 40),
               CustomTexFormtField(
                 labelText: AppStrings.emailAddress,
                 onChanged: (emailAddress) {
@@ -70,22 +59,18 @@ class CustomSignUpFoem extends StatelessWidget {
                   authCubit.password = password;
                 },
               ),
-              const TermsAndConditionWidget(),
-              const SizedBox(height: 100),
-              state is SignupLoadingState
+              SizedBox(height: 16),
+              ForgetPassword(),
+              SizedBox(height: 102),
+              state is SigninLoadingState
                   ? CircularProgressIndicator(color: AppColors.primaryColor)
                   : CustomButton(
-                      color: authCubit.termsAndConditionsCheckBoxValue == false
-                          ? AppColors.grey
-                          : null,
                       onPressed: () {
-                        if (authCubit.termsAndConditionsCheckBoxValue == true) {
-                          if (authCubit.sinupFormKey.currentState!.validate()) {
-                            authCubit.signUpWithEmailAndPassword();
-                          }
+                        if (authCubit.sininFormKey.currentState!.validate()) {
+                          authCubit.signInWithEmailAndPassword();
                         }
                       },
-                      text: AppStrings.signUp,
+                      text: AppStrings.signIn,
                     ),
             ],
           ),

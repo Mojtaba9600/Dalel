@@ -1,3 +1,4 @@
+import 'package:dalel/core/functons/navigation.dart';
 import 'package:dalel/core/utils/app_strings.dart';
 import 'package:dalel/features/auth/presentaion/widgets/already_have_an_account.dart';
 import 'package:dalel/features/auth/presentaion/widgets/custom_text_form.dart';
@@ -25,6 +26,9 @@ class SignUp extends StatelessWidget {
               child: AlreadyHaveAnAccount(
                 text1: AppStrings.alreadyHaveAnAccount,
                 text2: AppStrings.signIn,
+                onTap: () {
+                  customReplacementNavigate(context, "/SignIn");
+                },
               ),
             ),
           ],

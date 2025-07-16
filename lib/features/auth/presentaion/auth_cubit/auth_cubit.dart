@@ -12,10 +12,11 @@ class AuthCubit extends Cubit<AuthState> {
   late String? password;
   bool? termsAndConditionsCheckBoxValue = true;
   GlobalKey<FormState> sinupFormKey = GlobalKey();
-  signInWithEmailAndPassword() async {
+  GlobalKey<FormState> sininFormKey = GlobalKey();
+  signUpWithEmailAndPassword() async {
     try {
       emit(SignupLoadingState());
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailAddress!,
         password: password!,
       );
@@ -35,6 +36,27 @@ class AuthCubit extends Cubit<AuthState> {
 
   updateTermsAndConditionsCheckBox({required newValue}) {
     termsAndConditionsCheckBoxValue = newValue;
-    emit(updateTermsAndConditionsCheckBox(newValue: newValue));
+    emit(TermsAndConditionsUpdateState());
+  }
+
+  signInWithEmailAndPassword() async {
+    try {
+      emit(SigninLoadingState());
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailAddress!,
+        password: password!,
+      );
+      emit(SigninSuccesState());
+    } on FirebaseException catch (e) {
+      if (e.code == "weak password") {
+        emit(SigninFailureState(errMessage: "The Password is weak"));
+      } else if (e.code == "email-already-in-use") {
+        emit(
+          SigninFailureState(errMessage: "the account is areadly signed in"),
+        );
+      }
+    } catch (e) {
+      emit(SigninFailureState(errMessage: e.toString()));
+    }
   }
 }
